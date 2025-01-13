@@ -2,6 +2,7 @@ package com.mys.tutorial1.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -43,6 +44,13 @@ public class HomeController {
     public int showIncrease(){
         num++;
         return num;
+        // 우리는 숫자라 했지만 스프링부트에서 응답한 결과를 바디에 보내줄 때는 모든것이 문자열로 보여진다.
+    }
+
+    @GetMapping("/home/plus")
+    @ResponseBody
+    public int showPlus(@RequestParam(defaultValue = "0") int a, int b){
+        return a+b;
         // 우리는 숫자라 했지만 스프링부트에서 응답한 결과를 바디에 보내줄 때는 모든것이 문자열로 보여진다.
     }
 }
