@@ -1,8 +1,6 @@
 package com.mys.tutorial1.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,10 +17,12 @@ import java.util.Map;
 // 이 클래스는 웹 요청을 받아서 작업할 거야
 public class HomeController {
     int num;
+    List<Person> people;
 
     public HomeController(){
         //Controller 어노테이션이 들어가면 알아서 객체 생성되기 때문에 바로 쓸 수 있다.
         num = -1;
+        people = new ArrayList<>();
     }
 
     @GetMapping("/home/main")
@@ -181,6 +181,21 @@ public class HomeController {
         return list;
     }
 
+    @GetMapping("/home/addPerson")
+    @ResponseBody
+    public String addPerson(String name, int age) {
+        Person p = new Person(name, age);
+        System.out.println("p : " + p);
+        people.add(p);
+        return "%d번 사람이 추가되었습니다.".formatted(p.getId());
+    }
+
+    @GetMapping("/home/showPeople")
+    @ResponseBody
+    public List<Person> showPerson(){
+        return people;
+    }
+
 }
 
 class Article {
@@ -239,4 +254,21 @@ class Article2 {
     String content;
     String writerName;
     List<Integer> articleNo;
+}
+
+@AllArgsConstructor
+@Data
+class Person{
+    private  static int lastId;
+    private final int id;
+    private final String name;
+    private final int age;
+
+    static{
+        lastId=0;
+    }
+
+    public Person(String name, int age) {
+        this(++lastId, name, age);
+    }
 }
