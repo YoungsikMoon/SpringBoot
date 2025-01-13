@@ -1,9 +1,16 @@
 package com.mys.tutorial1.controller;
 
+import com.sun.source.tree.BreakTree;
+import jakarta.websocket.OnClose;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 // 개발자가 스프링부트한테 말한다
@@ -49,8 +56,56 @@ public class HomeController {
 
     @GetMapping("/home/plus")
     @ResponseBody
-    public int showPlus(@RequestParam(defaultValue = "0") int a, int b){
+    public int showPlus(@RequestParam(defaultValue = "0") int a,@RequestParam(defaultValue = "0") int b){
         return a+b;
         // 우리는 숫자라 했지만 스프링부트에서 응답한 결과를 바디에 보내줄 때는 모든것이 문자열로 보여진다.
+    }
+
+    @GetMapping("/home/returnBoolean")
+    @ResponseBody
+    public boolean showReturnBoolean(){
+        return true;
+    }
+
+    @GetMapping("/home/returnDouble")
+    @ResponseBody
+    public Double showReturnDouble(){
+        return Math.PI;
+    }
+
+    @GetMapping("/home/returnArray")
+    @ResponseBody
+    public int[] showReturnArray(){
+        int[] arr = new int[]{10, 20, 30};
+        return arr;
+    }
+
+
+    @GetMapping("/home/returnIntList")
+    @ResponseBody
+    public List<Integer> showReturnIntList() {
+        List<Integer> list = new ArrayList<>(){{
+            add(10);
+            add(20);
+            add(30);
+        }};
+        return list;
+    }
+
+    @GetMapping("/home/returnMap")
+    @ResponseBody
+    public Map<String, Object> showRetrunMap() {
+        Map<String, Object> map = new LinkedHashMap<>() {{
+            put("id", 1);
+            put("subject", "제목1");
+            put("content", "내용1");
+            put("writer", "김철수");
+            put("article", new ArrayList<>(){{
+                add(1);
+                add(2);
+                add(3);
+            }});
+        }};
+        return map;
     }
 }
