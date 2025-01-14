@@ -218,7 +218,7 @@ public class HomeController {
         System.out.println(target);
         people.remove(target);
         */
-
+        // 위 코드는 아래와 같이 줄여쓸 수 있다.
         // person.getId() == id
         // 위 함수가 참인 엘리먼트(요소)가 존재하면, 해당 요소를 삭제한다.
         // 해당 함수의 삭제 결과는 true or false이다.
@@ -228,6 +228,39 @@ public class HomeController {
             return "%d번 사람이 존재하지 않습니다.".formatted(id);
         }
         return "%d번 사람이 삭제되었습니다.".formatted(id);
+    }
+
+    @GetMapping("/home/modifyPerson")
+    @ResponseBody
+    public String modifyPerson(int id, String name, int age) {
+        /*
+        Person found = null;
+        for(Person p : people){
+            if(p.getId()==id){
+                found = p;
+                break;
+            }
+        }
+        if(found == null){
+            return "%d번 사람이 존재하지 않습니다.".formatted(id);
+        }
+        System.out.println("변경전 정보 : " + found);
+        found.setName(name);
+        found.setAge(age);
+        System.out.println("변경된 정보 : " + found);
+        return "%d번 사람을 수정했습니다.".formatted(id);
+         */
+
+        Person found = people.stream()
+                .filter(p -> p.getId()==id) // 해당 녀석이 참인 것만 필터링
+                .findFirst()// 찾은 것 중에 하나만 남는데, 그 하나 남은 것을 필터링
+                .orElse(null); // 없으면 null을 리턴
+        if(found == null){
+            return "%d번 사람이 존재하지 않습니다.".formatted(id);
+        }
+        found.setName(name);
+        found.setAge(age);
+        return "%d번 사람을 수정했습니다.".formatted(id);
     }
 
     @GetMapping("/home/showPeople")
@@ -301,8 +334,8 @@ class Article2 {
 class Person{
     private  static int lastId;
     private final int id;
-    private final String name;
-    private final int age;
+    private String name;
+    private int age;
 
     static{
         lastId=0;
