@@ -1,15 +1,16 @@
-package com.mys.tutorial1.controller;
+package com.mys.tutorial1.boundedContext.home.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 // 개발자가 스프링부트한테 말한다
@@ -269,6 +270,24 @@ public class HomeController {
         return people;
     }
 
+    @GetMapping("/home/cookie/increase")
+    @ResponseBody
+    public int showCookieIncrease(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        int countInCookie = 0;
+
+        if(req.getCookies() != null){
+            countInCookie = Arrays.stream(req.getCookies())
+                    .filter(cookie -> cookie.getName().equals("count"))
+                    .map(cookie -> cookie.getValue())
+                    .mapToInt(Integer::parseInt)
+                    .findAny()
+                    .orElse(0);
+        }
+        int newCountInCookie = countInCookie + 1;
+        resp.addCookie(new Cookie("count", countInCookie + 1 + ""));
+        return newCountInCookie;
+    }
+
 }
 
 class Article {
@@ -336,7 +355,6 @@ class Person{
     private final int id;
     private String name;
     private int age;
-
     static{
         lastId=0;
     }
