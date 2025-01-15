@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MemberController {
+
     /*
     @GetMapping("/member/login")
     @ResponseBody
@@ -30,6 +31,13 @@ public class MemberController {
     @GetMapping("/member/login")
     @ResponseBody
     public RsData login(String username, String password){
+        if(username == null || username.trim().isEmpty()){
+            return RsData.of("F-3","username을 입력해주세요.");
+        }
+        if(password == null || password.trim().isEmpty()){
+            return RsData.of("F-4","password를 입력해주세요.");
+        }
         return  memberService.tryLogin(username, password);
     }
+
 }
