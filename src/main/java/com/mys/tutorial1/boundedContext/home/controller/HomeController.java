@@ -122,8 +122,8 @@ public class HomeController {
 
     @GetMapping("/home/returnArticle2")
     @ResponseBody
-    public Article showReturnArticle2() {
-        Article article2 = new Article(1, "제목1", "내용1", "김철수", List.of(1, 2, 3));
+    public Article2 showReturnArticle2() {
+        Article2 article2 = new Article2(1, "제목1", "내용1", "김철수", List.of(1, 2, 3));
         return article2;
     }
 
