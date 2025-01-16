@@ -1,9 +1,11 @@
 package com.mys.tutorial1.boundedContext.home.controller;
-
+import com.mys.tutorial1.boundedContext.member.dto.Member;
+import com.mys.tutorial1.boundedContext.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +22,23 @@ public class HomeController {
     int num;
     List<Person> people;
 
-    public HomeController(){
+    /*
+    @Autowired // 오토와이얼드 필드 주입
+    private MemberService memberService;
+     */
+
+    private final MemberService memberService;
+    public HomeController(MemberService memberService){
         //Controller 어노테이션이 들어가면 알아서 객체 생성되기 때문에 바로 쓸 수 있다.
         num = -1;
         people = new ArrayList<>();
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/home/user1")
+    @ResponseBody
+    public Member showUser1(){
+        return memberService.memberRepository.findByUserName("user1");
     }
 
     @GetMapping("/home/main")
