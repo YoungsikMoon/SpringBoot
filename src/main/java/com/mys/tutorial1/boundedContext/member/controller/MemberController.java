@@ -1,5 +1,6 @@
 package com.mys.tutorial1.boundedContext.member.controller;
 
+import com.mys.tutorial1.base.rq.Rq.Rq;
 import com.mys.tutorial1.base.rsData.RsData;
 import com.mys.tutorial1.boundedContext.member.dto.Member;
 import com.mys.tutorial1.boundedContext.member.service.MemberService;
@@ -34,20 +35,22 @@ public class MemberController {
 
     @GetMapping("/member/login")
     @ResponseBody
-    public RsData login(String username, String password, HttpServletResponse resp){
+    public RsData login(String username, String password, HttpServletRequest req , HttpServletResponse resp){
+        Rq rq = new Rq(req, resp);
+
         if(username == null || username.trim().isEmpty()){
             return RsData.of("F-3","username을 입력해주세요.");
         }
 
         if(password == null || password.trim().isEmpty()){
-            return RsData.of("F-4","password를 입력해주세요.");
+            return RsData.of("F-4","비밀번호를 입력해주세요.");
         }
 
         RsData rsData = memberService.tryLogin(username, password);
 
         if(rsData.isSuccess()){
-            long memberId = (long)rsData.getData();
-            resp.addCookie(new Cookie("loginedMemberId", memberId+""));
+            Member member = (Member) rsData.getData();
+            rq.setCookie("loginedMemberId", member.getId());
         }
         return  rsData;
     }
@@ -55,31 +58,24 @@ public class MemberController {
     @GetMapping("/member/logout")
     @ResponseBody
     public RsData logout(HttpServletRequest req, HttpServletResponse resp) {
-        if (req.getCookies() != null) {
-            Arrays.stream(req.getCookies())
-                    .filter(cookie -> cookie.getName().equals("loginedMemberId")) // 정확한 이름 사용
-                    .forEach(cookie -> {
-                        cookie.setMaxAge(0); // 쿠키 만료
-                        resp.addCookie(cookie); // 수정된 쿠키를 응답에 추가
-                    });
+        Rq rq = new Rq(req, resp);
+
+        boolean cookieRemoved = rq.removeCookie("loginedMemberId");
+
+        if(!cookieRemoved) {
+            return RsData.of("F-1", "이미 로그아웃 상태입니다.");
         }
-        return RsData.of("S-1", "logout되었습니다.");
+
+        return RsData.of("S-1", "로그아웃 되었습니다.");
     }
 
 
     @GetMapping("/member/me")
     @ResponseBody
-    public RsData showMe(HttpServletRequest req){
-        long loginedMemberId = 0;
+    public RsData showMe(HttpServletRequest req, HttpServletResponse resp){
+        Rq rq = new Rq(req, resp);
 
-        if (req.getCookies() != null) {
-            loginedMemberId = Arrays.stream(req.getCookies())
-                    .filter(cookie -> cookie.getName().equals("loginedMemberId"))
-                    .map(Cookie::getValue) // .map(cookie -> cookie.getValue())와 동일
-                    .mapToLong(Long::parseLong)
-                    .findFirst()
-                    .orElse(0); // 반환값을 loginedMemberId에 저장
-        }
+        long loginedMemberId =rq.getCookieAsLong("LoginedMemberId", 0);
 
         boolean isLogined = loginedMemberId > 0; // loginedMemberId가 0보다 크면 로그인 상태로 간주
 

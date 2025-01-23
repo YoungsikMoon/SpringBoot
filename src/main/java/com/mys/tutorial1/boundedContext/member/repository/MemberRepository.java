@@ -25,13 +25,13 @@ public class MemberRepository {
 
     public Member findByUserName(String username) {
         /*
-        for(Member member:members){
-            if(member.getUsername().equals(username)){
-                return member;
-            }else {
-                return null;
-            }
-        }
+         for(Member member:members){
+             if(member.getUsername().equals(username)){
+                 return member;
+             }else {
+                 return null;
+             }
+         }
         */
         return members.stream()
                 .filter(member -> member.getUsername().equals(username))
